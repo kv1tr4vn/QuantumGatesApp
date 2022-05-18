@@ -51,6 +51,8 @@ def apply_walsh_hadamard(input_array):
     result = input_array
     for array_ind in range(length):
         result = apply_matrix(result, hadamard_matrix, array_ind)
+    for row in range(0, len(result)):
+        result[row] = "(1/sqrt(2))**" + str(length) + " *(" + str(result[row]).replace('I', 'j') + ")"
     return result
 
 
