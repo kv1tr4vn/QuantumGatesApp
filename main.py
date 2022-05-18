@@ -254,5 +254,18 @@ if __name__ == '__main__':
             main_message_error(str(error))
     ui.phasePushButton.clicked.connect(phase_push_button_clicked)
 
+
+    def clear_line_push_button_clicked():
+        ui.lineEdit.clear()
+    ui.clearLinePushButton.clicked.connect(clear_line_push_button_clicked)
+
+
+    def apply_line_push_button_clicked():
+        try:
+            output_array_to_table(apply_scheme(ui.lineEdit.text(), input_array_from_table()))
+        except sp.SympifyError as error:
+            main_message_error(str(error))
+    ui.applyLinePushButton.clicked.connect(apply_line_push_button_clicked)
+
     MainWindow.show()
     sys.exit(app.exec_())
