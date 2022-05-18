@@ -230,7 +230,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-122</y>
+            <y>0</y>
             <width>252</width>
             <height>814</height>
            </rect>
@@ -609,7 +609,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="text">

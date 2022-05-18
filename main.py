@@ -1,9 +1,9 @@
-import re
 import sys
 import math
 from mainwindow import *
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QMessageBox
 from gates import *
+from scheme_builder import *
 
 
 if __name__ == '__main__':
@@ -159,6 +159,7 @@ if __name__ == '__main__':
             return
         try:
             output_array_to_table(apply_sigma_x(input_array_from_table(), qubit_ind))
+            ui.lineEdit.setText(add_apply_sigma_x(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.pauliMatricesSigmaXPushButton.clicked.connect(pauli_matrices_sigma_x_push_button_clicked)
@@ -170,6 +171,7 @@ if __name__ == '__main__':
             return
         try:
             output_array_to_table(apply_sigma_y(input_array_from_table(), qubit_ind))
+            ui.lineEdit.setText(add_apply_sigma_y(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.pauliMatricesSigmaYPushButton.clicked.connect(pauli_matrices_sigma_y_push_button_clicked)
@@ -181,6 +183,7 @@ if __name__ == '__main__':
             return
         try:
             output_array_to_table(apply_sigma_z(input_array_from_table(), qubit_ind))
+            ui.lineEdit.setText(add_apply_sigma_z(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.pauliMatricesSigmaZPushButton.clicked.connect(pauli_matrices_sigma_z_push_button_clicked)
@@ -192,6 +195,7 @@ if __name__ == '__main__':
             return
         try:
             output_array_to_table(apply_hadamard(input_array_from_table(), qubit_ind))
+            ui.lineEdit.setText(add_apply_hadamard(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.hadamardPushButton.clicked.connect(hadamard_push_button_clicked)
@@ -200,6 +204,7 @@ if __name__ == '__main__':
     def walsh_hadamard_push_button_clicked():
         try:
             output_array_to_table(apply_walsh_hadamard(input_array_from_table()))
+            ui.lineEdit.setText(add_apply_walsh_hadamard(ui.lineEdit.text()))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.walshHadamardPushButton.clicked.connect(walsh_hadamard_push_button_clicked)
@@ -212,6 +217,7 @@ if __name__ == '__main__':
             return
         try:
             output_array_to_table(apply_cnot(input_array_from_table(), control_qubit_ind, target_qubit_ind))
+            ui.lineEdit.setText(add_apply_cnot(ui.lineEdit.text(), control_qubit_ind, target_qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.controlledNotPushButton.clicked.connect(controlled_not_push_button_clicked)
@@ -226,6 +232,8 @@ if __name__ == '__main__':
         try:
             output_array_to_table(apply_ccnot(
                 input_array_from_table(), first_control_qubit_ind, second_control_qubit_ind, target_qubit_ind))
+            ui.lineEdit.setText(add_apply_ccnot(
+                ui.lineEdit.text(), first_control_qubit_ind, second_control_qubit_ind, target_qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.controlledControlledNotPushButton.clicked.connect(controlled_controlled_not_push_button_clicked)
@@ -236,10 +244,12 @@ if __name__ == '__main__':
         phase_target_qubit_ind = qubit_number_from_spin_box(ui.phaseTargetSpinBox)
         if phase_control_qubit_ind == -1 or phase_target_qubit_ind == -1:
             return
-        phase = math.pi * ui.phaseDoubleSpinBox.value()
         try:
-            output_array_to_table(apply_phase(
-                input_array_from_table(), phase, phase_control_qubit_ind, phase_target_qubit_ind))
+            output_array_to_table(
+                apply_phase(input_array_from_table(),
+                            phase_control_qubit_ind, phase_target_qubit_ind, math.pi * ui.phaseDoubleSpinBox.value()))
+            ui.lineEdit.setText(add_apply_phase(
+                ui.lineEdit.text(), phase_control_qubit_ind, phase_target_qubit_ind, ui.phaseDoubleSpinBox.value()))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.phasePushButton.clicked.connect(phase_push_button_clicked)
