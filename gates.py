@@ -77,10 +77,11 @@ def apply_ccnot(input_array, first_control_qubit_ind, second_qubit_ind, target_q
     return result
 
 
-def apply_phase(input_array, phase, control_qubit_ind):
+def apply_phase(input_array, phase, control_qubit_ind, target_qubit_ind):
     length = int(np.log2(input_array.size))
     result = input_array
     for array_ind in range(input_array.size):
-        if dec_to_bin_list(array_ind, length)[control_qubit_ind] == 1:
+        if dec_to_bin_list(array_ind, length)[control_qubit_ind] == 1 and \
+                dec_to_bin_list(array_ind, length)[target_qubit_ind] == 1:
             result[array_ind] = sp.sympify("(" + str(np.exp(phase * 1j)) + ")*(" + input_array[array_ind] + ")")
     return result

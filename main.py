@@ -233,11 +233,13 @@ if __name__ == '__main__':
 
     def phase_push_button_clicked():
         phase_control_qubit_ind = qubit_number_from_spin_box(ui.phaseControlSpinBox)
-        if phase_control_qubit_ind == -1:
+        phase_target_qubit_ind = qubit_number_from_spin_box(ui.phaseTargetSpinBox)
+        if phase_control_qubit_ind == -1 or phase_target_qubit_ind == -1:
             return
         phase = math.pi * ui.phaseDoubleSpinBox.value()
         try:
-            output_array_to_table(apply_phase(input_array_from_table(), phase, phase_control_qubit_ind))
+            output_array_to_table(apply_phase(
+                input_array_from_table(), phase, phase_control_qubit_ind, phase_target_qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.phasePushButton.clicked.connect(phase_push_button_clicked)
