@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import sympy as sp
 from bin_tools import dec_to_bin_list, bin_list_to_dec, bin_register
@@ -42,7 +43,7 @@ def apply_hadamard(input_array, qubit_ind):
     result = apply_matrix(input_array, hadamard_matrix, qubit_ind)
     for row in range(0, len(result)):
         result[row] = "1/sqrt(2)*(" + str(result[row]).replace('I', 'j') + ")"
-    return sp.sympify(result)
+    return result
 
 
 def apply_walsh_hadamard(input_array):
@@ -77,11 +78,12 @@ def apply_ccnot(input_array, first_control_qubit_ind, second_control_qubit_ind, 
     return result
 
 
-def apply_phase(input_array, control_qubit_ind, target_qubit_ind, phase):
+def apply_phase(input_array, control_qubit_ind, target_qubit_ind, phase_in_fractions_of_pi):
+    real_phase = math.pi * phase_in_fractions_of_pi
     length = int(np.log2(input_array.size))
     result = input_array
     for array_ind in range(input_array.size):
         if dec_to_bin_list(array_ind, length)[control_qubit_ind] == 1 and \
                 dec_to_bin_list(array_ind, length)[target_qubit_ind] == 1:
-            result[array_ind] = sp.sympify("(" + str(np.exp(phase * 1j)) + ")*(" + input_array[array_ind] + ")")
+            result[array_ind] = sp.sympify("(" + str(np.exp(real_phase * 1j)) + ")*(" + input_array[array_ind] + ")")
     return result

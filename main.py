@@ -245,11 +245,12 @@ if __name__ == '__main__':
         if phase_control_qubit_ind == -1 or phase_target_qubit_ind == -1:
             return
         try:
+            phase_in_fractions_of_pi = ui.phaseDoubleSpinBox.value()
             output_array_to_table(
                 apply_phase(input_array_from_table(),
-                            phase_control_qubit_ind, phase_target_qubit_ind, math.pi * ui.phaseDoubleSpinBox.value()))
+                            phase_control_qubit_ind, phase_target_qubit_ind, phase_in_fractions_of_pi))
             ui.lineEdit.setText(add_apply_phase(
-                ui.lineEdit.text(), phase_control_qubit_ind, phase_target_qubit_ind, ui.phaseDoubleSpinBox.value()))
+                ui.lineEdit.text(), phase_control_qubit_ind, phase_target_qubit_ind, phase_in_fractions_of_pi))
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.phasePushButton.clicked.connect(phase_push_button_clicked)
@@ -262,7 +263,11 @@ if __name__ == '__main__':
 
     def apply_line_push_button_clicked():
         try:
-            output_array_to_table(apply_scheme(ui.lineEdit.text(), input_array_from_table()))
+            result_array, error_message = apply_scheme(ui.lineEdit.text(), input_array_from_table())
+            if error_message == '':
+                output_array_to_table(result_array)
+                return
+            main_message_error(error_message)
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.applyLinePushButton.clicked.connect(apply_line_push_button_clicked)
