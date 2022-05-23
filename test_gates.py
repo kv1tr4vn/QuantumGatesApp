@@ -57,14 +57,12 @@ class TestGates(unittest.TestCase):
         target_qubit_ind = 0
 
         result_array = apply_sigma_x(input_array, target_qubit_ind)
-        print(result_array)
 
         expected_array = np.array([
             'c3 + c3 * j',
             'c4 + c4 * j',
             'c1 + c1 * j',
             'c2 + c2 * j'], dtype='U1000')
-        print(expected_array)
 
         self.assertTrue(result_array.size == expected_array.size)
         for array_ind in range(expected_array.size):
@@ -86,6 +84,90 @@ class TestGates(unittest.TestCase):
             'c1 + c1 * j',
             'c4 + c4 * j',
             'c3 + c3 * j'], dtype='U1000')
+
+        self.assertTrue(result_array.size == expected_array.size)
+        for array_ind in range(expected_array.size):
+            self.assertTrue((sp.simplify(result_array[array_ind] + ' - (' + expected_array[array_ind] + ')') == 0))
+
+    def test_apply_sigma_y_1(self):
+        input_array = np.array([
+            'c1 + c1 * I',
+            'c2 + c2 * I',
+            'c3 + c3 * I',
+            'c4 + c4 * I'], dtype='U1000')
+
+        target_qubit_ind = 0
+
+        result_array = apply_sigma_y(input_array, target_qubit_ind)
+
+        expected_array = np.array([
+            'I*(c3 + c3 * j)',
+            'I*(c4 + c4 * j)',
+            '-I*(c1 + c1 * j)',
+            '-I*(c2 + c2 * j)'], dtype='U1000')
+
+        self.assertTrue(result_array.size == expected_array.size)
+        for array_ind in range(expected_array.size):
+            self.assertTrue((sp.simplify(result_array[array_ind] + ' - (' + expected_array[array_ind] + ')') == 0))
+
+    def test_apply_sigma_y_2(self):
+        input_array = np.array([
+            'c1 + c1 * I',
+            'c2 + c2 * I',
+            'c3 + c3 * I',
+            'c4 + c4 * I'], dtype='U1000')
+
+        target_qubit_ind = 1
+
+        result_array = apply_sigma_y(input_array, target_qubit_ind)
+
+        expected_array = np.array([
+            'I*(c2 + c2 * j)',
+            '-I*(c1 + c1 * j)',
+            'I*(c4 + c4 * j)',
+            '-I*(c3 + c3 * j)'], dtype='U1000')
+
+        self.assertTrue(result_array.size == expected_array.size)
+        for array_ind in range(expected_array.size):
+            self.assertTrue((sp.simplify(result_array[array_ind] + ' - (' + expected_array[array_ind] + ')') == 0))
+
+    def test_apply_sigma_z_1(self):
+        input_array = np.array([
+            'c1 + c1 * I',
+            'c2 + c2 * I',
+            'c3 + c3 * I',
+            'c4 + c4 * I'], dtype='U1000')
+
+        target_qubit_ind = 0
+
+        result_array = apply_sigma_z(input_array, target_qubit_ind)
+
+        expected_array = np.array([
+            'c1 + c1 * j',
+            'c2 + c2 * j',
+            '-1*(c3 + c3 * j)',
+            '-1*(c4 + c4 * j)'], dtype='U1000')
+
+        self.assertTrue(result_array.size == expected_array.size)
+        for array_ind in range(expected_array.size):
+            self.assertTrue((sp.simplify(result_array[array_ind] + ' - (' + expected_array[array_ind] + ')') == 0))
+
+    def test_apply_sigma_z_2(self):
+        input_array = np.array([
+            'c1 + c1 * I',
+            'c2 + c2 * I',
+            'c3 + c3 * I',
+            'c4 + c4 * I'], dtype='U1000')
+
+        target_qubit_ind = 1
+
+        result_array = apply_sigma_z(input_array, target_qubit_ind)
+
+        expected_array = np.array([
+            'c1 + c1 * j',
+            '-1*(c2 + c2 * j)',
+            'c3 + c3 * j',
+            '-1*(c4 + c4 * j)'], dtype='U1000')
 
         self.assertTrue(result_array.size == expected_array.size)
         for array_ind in range(expected_array.size):
