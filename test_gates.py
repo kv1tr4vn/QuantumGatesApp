@@ -160,6 +160,35 @@ class TestGates(unittest.TestCase):
         for array_ind in range(expected_array.size):
             self.assertTrue((sp.simplify(result_array[array_ind] + ' - (' + expected_array[array_ind] + ')') == 0))
 
+    def test_apply_sigma_y_3_1(self):
+        input_array = np.array([
+            'c1 + c1 * I',
+            'c2 + c2 * I',
+            'c3 + c3 * I',
+            'c4 + c4 * I',
+            'c5 + c5 * I',
+            'c6 + c6 * I',
+            'c7 + c7 * I',
+            'c8 + c8 * I'], dtype='U1000')
+
+        target_qubit_ind = 0
+
+        result_array = apply_sigma_y(input_array, target_qubit_ind)
+
+        expected_array = np.array([
+            'I*(c5 + c5 * j)',
+            'I*(c6 + c6 * j)',
+            'I*(c7 + c7 * j)',
+            'I*(c8 + c8 * j)',
+            '-I*(c1 + c1 * j)',
+            '-I*(c2 + c2 * j)',
+            '-I*(c3 + c3 * j)',
+            '-I*(c4 + c4 * j)'], dtype='U1000')
+
+        self.assertTrue(result_array.size == expected_array.size)
+        for array_ind in range(expected_array.size):
+            self.assertTrue((sp.simplify(result_array[array_ind] + ' - (' + expected_array[array_ind] + ')') == 0))
+
     def test_apply_sigma_z_1(self):
         input_array = np.array([
             'c1 + c1 * I',
