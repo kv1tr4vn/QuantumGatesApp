@@ -281,45 +281,44 @@ if __name__ == '__main__':
     ui.applyLinePushButton.clicked.connect(apply_line_push_button_clicked)
 
 
+    def import_txt_to_table(table_widget):
+        try:
+            filename, _ = QFileDialog.getOpenFileName(None, "Select File", "", "Text Files (*.txt)")
+            if filename == '':
+                return
+            with open(filename) as file:
+                import_array = file.read().splitlines()
+                output_array_to_table(import_array, table_widget)
+        except sp.SympifyError as error:
+            main_message_error(str(error))
+
     def input_import_txt_push_button_clicked():
-        filename, _ = QFileDialog.getOpenFileName(None, "Select File", "", "Text Files (*.txt)")
-        if filename == '':
-            return
-        with open(filename) as file:
-            import_array = file.read().splitlines()
-            output_array_to_table(import_array, ui.inputTableWidget)
+        import_txt_to_table(ui.inputTableWidget)
     ui.inputImportTxtPushButton.clicked.connect(input_import_txt_push_button_clicked)
 
-
-    def input_export_txt_push_button_clicked():
-        export_array = sp.simplify(input_array_from_table(ui.inputTableWidget))
-        export_str = '\n'.join('{}'.format(item) for item in export_array)
-        filename, _ = QFileDialog.getSaveFileName(None, 'Export File', "", 'Text Files (*.txt)')
-        if filename == '':
-            return
-        with open(filename, 'w') as file:
-            file.write(export_str)
-    ui.inputExportTxtPushButton.clicked.connect(input_export_txt_push_button_clicked)
-
-
     def output_import_txt_push_button_clicked():
-        filename, _ = QFileDialog.getOpenFileName(None, "Select File", "", "Text Files (*.txt)")
-        if filename == '':
-            return
-        with open(filename) as file:
-            import_array = file.read().splitlines()
-            output_array_to_table(import_array, ui.outputTableWidget)
+        import_txt_to_table(ui.outputTableWidget)
     ui.outputImportTxtPushButton.clicked.connect(output_import_txt_push_button_clicked)
 
 
+    def export_txt_from_file(table_widget):
+        try:
+            export_array = sp.simplify(input_array_from_table(table_widget))
+            export_str = '\n'.join('{}'.format(item) for item in export_array)
+            filename, _ = QFileDialog.getSaveFileName(None, 'Export File', "", 'Text Files (*.txt)')
+            if filename == '':
+                return
+            with open(filename, 'w') as file:
+                file.write(export_str)
+        except sp.SympifyError as error:
+            main_message_error(str(error))
+
+    def input_export_txt_push_button_clicked():
+        export_txt_from_file(ui.inputTableWidget)
+    ui.inputExportTxtPushButton.clicked.connect(input_export_txt_push_button_clicked)
+
     def output_export_txt_push_button_clicked():
-        export_array = sp.simplify(input_array_from_table(ui.outputTableWidget))
-        export_str = '\n'.join('{}'.format(item) for item in export_array)
-        filename, _ = QFileDialog.getSaveFileName(None, 'Export File', "", 'Text Files (*.txt)')
-        if filename == '':
-            return
-        with open(filename, 'w') as file:
-            file.write(export_str)
+        export_txt_from_file(ui.outputTableWidget)
     ui.outputExportTxtPushButton.clicked.connect(output_export_txt_push_button_clicked)
 
     MainWindow.show()
