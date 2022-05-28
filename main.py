@@ -1,7 +1,7 @@
 import sys
 import math
 from mainwindow import *
-from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog
 from gates import *
 from scheme_builder import *
 
@@ -26,16 +26,16 @@ if __name__ == '__main__':
             ui.outputTableWidget.setItem(row, col, item.clone())
 
 
-    def input_array_from_table():
+    def input_array_from_table(table_widget):
         result = np.zeros(0, dtype='U1000')
         for row in range(0, n_rows):
-            item_real = ui.inputTableWidget.item(row, 0).text()
-            item_imag = ui.inputTableWidget.item(row, 1).text()
+            item_real = table_widget.item(row, 0).text()
+            item_imag = table_widget.item(row, 1).text()
             result = np.append(result, item_real + ' + ' + item_imag + ' * I')
         return result
 
 
-    def output_array_to_table(output_array):
+    def output_array_to_table(output_array, table_widget):
         for row in range(0, n_rows):
             row_data = sp.expand(str(output_array[row]).replace('j', 'I'))
 
@@ -48,11 +48,11 @@ if __name__ == '__main__':
 
             item_real = QTableWidgetItem(row_data_real)
             item_real.setTextAlignment(132)
-            ui.outputTableWidget.setItem(row, 0, item_real)
+            table_widget.setItem(row, 0, item_real)
 
             item_imag = QTableWidgetItem(row_data_imag)
             item_imag.setTextAlignment(132)
-            ui.outputTableWidget.setItem(row, 1, item_imag)
+            table_widget.setItem(row, 1, item_imag)
 
 
     def qubit_number_from_spin_box(spin_box):
@@ -158,7 +158,8 @@ if __name__ == '__main__':
         if qubit_ind == -1:
             return
         try:
-            output_array_to_table(apply_sigma_x(input_array_from_table(), qubit_ind))
+            output_array_to_table(
+                apply_sigma_x(input_array_from_table(ui.inputTableWidget), qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_sigma_x(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -170,7 +171,8 @@ if __name__ == '__main__':
         if qubit_ind == -1:
             return
         try:
-            output_array_to_table(apply_sigma_y(input_array_from_table(), qubit_ind))
+            output_array_to_table(
+                apply_sigma_y(input_array_from_table(ui.inputTableWidget), qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_sigma_y(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -182,7 +184,8 @@ if __name__ == '__main__':
         if qubit_ind == -1:
             return
         try:
-            output_array_to_table(apply_sigma_z(input_array_from_table(), qubit_ind))
+            output_array_to_table(
+                apply_sigma_z(input_array_from_table(ui.inputTableWidget), qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_sigma_z(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -194,7 +197,8 @@ if __name__ == '__main__':
         if qubit_ind == -1:
             return
         try:
-            output_array_to_table(apply_hadamard(input_array_from_table(), qubit_ind))
+            output_array_to_table(
+                apply_hadamard(input_array_from_table(ui.inputTableWidget), qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_hadamard(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -203,7 +207,8 @@ if __name__ == '__main__':
 
     def walsh_hadamard_push_button_clicked():
         try:
-            output_array_to_table(apply_walsh_hadamard(input_array_from_table()))
+            output_array_to_table(
+                apply_walsh_hadamard(input_array_from_table(ui.inputTableWidget)), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_walsh_hadamard(ui.lineEdit.text()))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -216,7 +221,9 @@ if __name__ == '__main__':
         if control_qubit_ind == -1 or target_qubit_ind == -1:
             return
         try:
-            output_array_to_table(apply_cnot(input_array_from_table(), control_qubit_ind, target_qubit_ind))
+            output_array_to_table(
+                apply_cnot(input_array_from_table(ui.inputTableWidget), control_qubit_ind, target_qubit_ind),
+                ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_cnot(ui.lineEdit.text(), control_qubit_ind, target_qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -231,7 +238,8 @@ if __name__ == '__main__':
             return
         try:
             output_array_to_table(apply_ccnot(
-                input_array_from_table(), first_control_qubit_ind, second_control_qubit_ind, target_qubit_ind))
+                input_array_from_table(ui.inputTableWidget),
+                first_control_qubit_ind, second_control_qubit_ind, target_qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_ccnot(
                 ui.lineEdit.text(), first_control_qubit_ind, second_control_qubit_ind, target_qubit_ind))
         except sp.SympifyError as error:
@@ -246,9 +254,9 @@ if __name__ == '__main__':
             return
         try:
             phase_in_fractions_of_pi = ui.phaseDoubleSpinBox.value()
-            output_array_to_table(
-                apply_phase(input_array_from_table(),
-                            phase_control_qubit_ind, phase_target_qubit_ind, phase_in_fractions_of_pi))
+            output_array_to_table(apply_phase(
+                input_array_from_table(ui.inputTableWidget),
+                phase_control_qubit_ind, phase_target_qubit_ind, phase_in_fractions_of_pi), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_phase(
                 ui.lineEdit.text(), phase_control_qubit_ind, phase_target_qubit_ind, phase_in_fractions_of_pi))
         except sp.SympifyError as error:
@@ -263,14 +271,56 @@ if __name__ == '__main__':
 
     def apply_line_push_button_clicked():
         try:
-            result_array, error_message = apply_scheme(ui.lineEdit.text(), input_array_from_table())
+            result_array, error_message = apply_scheme(ui.lineEdit.text(), input_array_from_table(ui.inputTableWidget))
             if error_message == '':
-                output_array_to_table(result_array)
+                output_array_to_table(result_array, ui.outputTableWidget)
                 return
             main_message_error(error_message)
         except sp.SympifyError as error:
             main_message_error(str(error))
     ui.applyLinePushButton.clicked.connect(apply_line_push_button_clicked)
+
+
+    def input_import_txt_push_button_clicked():
+        filename, _ = QFileDialog.getOpenFileName(None, "Select File", "", "Text Files (*.txt)")
+        if filename == '':
+            return
+        with open(filename) as file:
+            import_array = file.read().splitlines()
+            output_array_to_table(import_array, ui.inputTableWidget)
+    ui.inputImportTxtPushButton.clicked.connect(input_import_txt_push_button_clicked)
+
+
+    def input_export_txt_push_button_clicked():
+        export_array = sp.simplify(input_array_from_table(ui.inputTableWidget))
+        export_str = '\n'.join('{}'.format(item) for item in export_array)
+        filename, _ = QFileDialog.getSaveFileName(None, 'Export File', "", 'Text Files (*.txt)')
+        if filename == '':
+            return
+        with open(filename, 'w') as file:
+            file.write(export_str)
+    ui.inputExportTxtPushButton.clicked.connect(input_export_txt_push_button_clicked)
+
+
+    def output_import_txt_push_button_clicked():
+        filename, _ = QFileDialog.getOpenFileName(None, "Select File", "", "Text Files (*.txt)")
+        if filename == '':
+            return
+        with open(filename) as file:
+            import_array = file.read().splitlines()
+            output_array_to_table(import_array, ui.outputTableWidget)
+    ui.outputImportTxtPushButton.clicked.connect(output_import_txt_push_button_clicked)
+
+
+    def output_export_txt_push_button_clicked():
+        export_array = sp.simplify(input_array_from_table(ui.outputTableWidget))
+        export_str = '\n'.join('{}'.format(item) for item in export_array)
+        filename, _ = QFileDialog.getSaveFileName(None, 'Export File', "", 'Text Files (*.txt)')
+        if filename == '':
+            return
+        with open(filename, 'w') as file:
+            file.write(export_str)
+    ui.outputExportTxtPushButton.clicked.connect(output_export_txt_push_button_clicked)
 
     MainWindow.show()
     sys.exit(app.exec_())
