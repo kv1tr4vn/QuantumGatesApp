@@ -55,14 +55,39 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         target_qubit_ind = 0
-
         result_array = apply_sigma_x(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'c3 + c3 * j',
             'c4 + c4 * j',
             'c1 + c1 * j',
             'c2 + c2 * j'], dtype='U1000')
+
+        self.assertTrue(result_array.size == expected_array.size)
+        for array_ind in range(expected_array.size):
+            self.assertTrue((sp.simplify(result_array[array_ind] + ' - (' + expected_array[array_ind] + ')') == 0))
+
+    def test_apply_sigma_x_3_2(self):
+        input_array = np.array([
+            'c1 + c1 * I',
+            'c2 + c2 * I',
+            'c3 + c3 * I',
+            'c4 + c4 * I',
+            'c5 + c5 * I',
+            'c6 + c6 * I',
+            'c7 + c7 * I',
+            'c8 + c8 * I'], dtype='U1000')
+
+        target_qubit_ind = 1
+        result_array = apply_sigma_x(input_array, target_qubit_ind)
+        expected_array = np.array([
+            'c3 + c3 * j',
+            'c4 + c4 * j',
+            'c1 + c1 * j',
+            'c2 + c2 * j',
+            'c7 + c7 * j',
+            'c8 + c8 * j',
+            'c5 + c5 * j',
+            'c6 + c6 * j'], dtype='U1000')
 
         self.assertTrue(result_array.size == expected_array.size)
         for array_ind in range(expected_array.size):
@@ -76,9 +101,7 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         target_qubit_ind = 1
-
         result_array = apply_sigma_x(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'c2 + c2 * j',
             'c1 + c1 * j',
@@ -101,9 +124,7 @@ class TestGates(unittest.TestCase):
             'c8 + c8 * I'], dtype='U1000')
 
         target_qubit_ind = 1
-
         result_array = apply_sigma_x(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'c3 + c3 * j',
             'c4 + c4 * j',
@@ -126,9 +147,7 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         target_qubit_ind = 0
-
         result_array = apply_sigma_y(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'I*(c3 + c3 * j)',
             'I*(c4 + c4 * j)',
@@ -147,9 +166,7 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         target_qubit_ind = 1
-
         result_array = apply_sigma_y(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'I*(c2 + c2 * j)',
             '-I*(c1 + c1 * j)',
@@ -172,9 +189,7 @@ class TestGates(unittest.TestCase):
             'c8 + c8 * I'], dtype='U1000')
 
         target_qubit_ind = 0
-
         result_array = apply_sigma_y(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'I*(c5 + c5 * j)',
             'I*(c6 + c6 * j)',
@@ -201,7 +216,6 @@ class TestGates(unittest.TestCase):
             'c8 + c8 * I'], dtype='U1000')
 
         target_qubit_ind = 1
-
         result_array = apply_sigma_y(input_array, target_qubit_ind)
         expected_array = np.array([
             'I*(c3 + c3 * j)',
@@ -225,9 +239,7 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         target_qubit_ind = 0
-
         result_array = apply_sigma_z(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'c1 + c1 * j',
             'c2 + c2 * j',
@@ -251,7 +263,6 @@ class TestGates(unittest.TestCase):
 
         target_qubit_ind = 0
         result_array = apply_sigma_z(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'c1 + c1 * j',
             'c2 + c2 * j',
@@ -274,9 +285,7 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         target_qubit_ind = 1
-
         result_array = apply_sigma_z(input_array, target_qubit_ind)
-
         expected_array = np.array([
             'c1 + c1 * j',
             '-1*(c2 + c2 * j)',
@@ -299,7 +308,6 @@ class TestGates(unittest.TestCase):
             'c8 + c8 * I'], dtype='U1000')
 
         target_qubit_ind = 1
-
         result_array = apply_sigma_z(input_array, target_qubit_ind)
         expected_array = np.array([
             'c1 + c1 * j',
@@ -321,9 +329,7 @@ class TestGates(unittest.TestCase):
             'c2 + c2 * I'], dtype='U1000')
 
         target_qubit_ind = 0
-
         result_array = apply_hadamard(input_array, target_qubit_ind)
-
         expected_array = np.array([
             '(c1 + c1*j + c2 + c2*j) / sqrt(2)',
             '(c1 + c1*j - c2 - c2*j) / sqrt(2)'], dtype='U1000')
@@ -340,9 +346,7 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         target_qubit_ind = 0
-
         result_array = apply_hadamard(input_array, target_qubit_ind)
-
         expected_array = np.array([
             '(c1 + c3 + c1 * j + c3 * j) / sqrt(2)',
             '(c2 + c4 + c2 * j + c4 * j) / sqrt(2)',
@@ -361,9 +365,7 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         target_qubit_ind = 1
-
         result_array = apply_hadamard(input_array, target_qubit_ind)
-
         expected_array = np.array([
             '(c1 + c2 + c1 * j + c2 * j) / sqrt(2)',
             '(c1 - c2 + c1 * j - c2 * j) / sqrt(2)',
@@ -380,7 +382,6 @@ class TestGates(unittest.TestCase):
             'c2 + c2 * I'], dtype='U1000')
 
         result_array = apply_walsh_hadamard(input_array)
-
         expected_array = np.array([
             '(c1 + c1*j + c2 + c2*j) / sqrt(2)',
             '(c1 + c1*j - c2 - c2*j) / sqrt(2)'], dtype='U1000')
@@ -397,7 +398,6 @@ class TestGates(unittest.TestCase):
             'c4 + c4 * I'], dtype='U1000')
 
         result_array = apply_walsh_hadamard(input_array)
-
         expected_array = np.array([
             '(c1 + c1*j + c2 + c2*j + c3 + c3*j + c4 + c4*j) / sqrt(4)',
             '(c1 + c1*j - c2 - c2*j + c3 + c3*j - c4 - c4*j) / sqrt(4)',
@@ -419,7 +419,6 @@ class TestGates(unittest.TestCase):
         target_qubit_ind = 1
 
         result_array = apply_cnot(input_array, control_qubit_ind, target_qubit_ind)
-        #print(result_array)
         expected_array = np.array([
             'c1 + c1 * I',
             'c2 + c2 * I',
