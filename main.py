@@ -106,7 +106,7 @@ if __name__ == '__main__':
     def set_symbolic_table_widget(table_widget):
         for col in range(0, n_cols):
             for row in range(0, n_rows):
-                item = QTableWidgetItem('c' + str(row + 1))
+                item = QTableWidgetItem('c' + str(row))
                 item.setTextAlignment(132)
                 table_widget.setItem(row, col, item)
 
@@ -121,11 +121,11 @@ if __name__ == '__main__':
 
     def set_symbolic_by_re_and_im_table_widget(table_widget):
         for row in range(0, n_rows):
-            item_real = QTableWidgetItem('r' + str(row + 1))
+            item_real = QTableWidgetItem('r' + str(row))
             item_real.setTextAlignment(132)
             table_widget.setItem(row, 0, item_real)
 
-            item_imag = QTableWidgetItem('i' + str(row + 1))
+            item_imag = QTableWidgetItem('i' + str(row))
             item_imag.setTextAlignment(132)
             table_widget.setItem(row, 1, item_imag)
 
