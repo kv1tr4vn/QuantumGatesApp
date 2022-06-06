@@ -29,7 +29,10 @@ if __name__ == '__main__':
         for row in range(0, n_rows):
             item_real = table_widget.item(row, 0).text()
             item_imag = table_widget.item(row, 1).text()
-            result = np.append(result, item_real + ' + ' + item_imag + ' * I')
+            item_real = '0' if item_real == '' else item_real
+            item_imag = '0' if item_imag == '' else item_imag
+            result_row = '(' + item_real + ') + (' + item_imag + ') * I'
+            result = np.append(result, result_row)
         return result
 
 
