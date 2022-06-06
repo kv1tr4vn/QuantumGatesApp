@@ -89,3 +89,31 @@ def apply_phase(input_array, control_qubit_ind, target_qubit_ind, phase_in_fract
                 dec_to_bin_list(array_ind, length)[target_qubit_ind] == 1:
             result[array_ind] = sp.sympify("(" + str(np.exp(real_phase * 1j)) + ")*(" + input_array[array_ind] + ")")
     return result
+
+
+def is_numeric(input_array):
+    result = True
+    for expr in input_array:
+        if not sp.sympify(expr).is_number:
+            result = False
+            break
+    return result
+
+
+def length(input_array):
+    result = ''
+    for expr in input_array:
+        result += ' + (' + expr + ') * (' + expr + ')'
+    return sp.simplify('(' + result + ') ^ (1 / 2)')
+
+
+def normalize(input_array):
+    input_length = length(input_array)
+    # todo: find way to check by eps here for very small coeffs
+    if input_length == 0:
+        return input_array
+
+    result = input_array
+    for array_ind in range(input_array.size):
+        result[array_ind] = sp.simplify('(' + result[array_ind] + ') / (' + str(input_length) + ')')
+    return result

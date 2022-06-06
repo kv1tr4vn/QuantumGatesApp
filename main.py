@@ -1,8 +1,6 @@
 import sys
-import math
 from mainwindow import *
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog
-from gates import *
 from scheme_builder import *
 
 
@@ -144,7 +142,6 @@ if __name__ == '__main__':
                 ui.inputTableWidget.setItem(row, col, ui.outputTableWidget.item(row, col).clone())
     ui.copyResultToInputPushButton.clicked.connect(copy_result_to_input_push_button_clicked)
 
-
     def main_message_error(string):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
@@ -153,13 +150,37 @@ if __name__ == '__main__':
         msg.exec_()
 
 
+    def normalize_input_if_needed(input_array):
+        if not is_numeric(input_array):
+            return input_array
+
+        input_length = length(input_array)
+        if input_length == 1:
+            return input_array
+
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Question)
+        msg.setWindowTitle("Question")
+        msg.setText("Input is not normalized. Normalize?")
+        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        retval = msg.exec_()
+
+        if retval == QMessageBox.No:
+            return input_array
+        return normalize(input_array)
+
+
     def pauli_matrices_sigma_x_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         qubit_ind = qubit_number_from_spin_box(ui.pauliMatricesSpinBox)
         if qubit_ind == -1:
             return
         try:
             output_array_to_table(
-                apply_sigma_x(input_array_from_table(ui.inputTableWidget), qubit_ind), ui.outputTableWidget)
+                apply_sigma_x(input_array, qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_sigma_x(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -167,12 +188,16 @@ if __name__ == '__main__':
 
 
     def pauli_matrices_sigma_y_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         qubit_ind = qubit_number_from_spin_box(ui.pauliMatricesSpinBox)
         if qubit_ind == -1:
             return
         try:
             output_array_to_table(
-                apply_sigma_y(input_array_from_table(ui.inputTableWidget), qubit_ind), ui.outputTableWidget)
+                apply_sigma_y(input_array, qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_sigma_y(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -180,12 +205,16 @@ if __name__ == '__main__':
 
 
     def pauli_matrices_sigma_z_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         qubit_ind = qubit_number_from_spin_box(ui.pauliMatricesSpinBox)
         if qubit_ind == -1:
             return
         try:
             output_array_to_table(
-                apply_sigma_z(input_array_from_table(ui.inputTableWidget), qubit_ind), ui.outputTableWidget)
+                apply_sigma_z(input_array, qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_sigma_z(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -193,12 +222,16 @@ if __name__ == '__main__':
 
 
     def hadamard_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         qubit_ind = qubit_number_from_spin_box(ui.hadamardSpinBox)
         if qubit_ind == -1:
             return
         try:
             output_array_to_table(
-                apply_hadamard(input_array_from_table(ui.inputTableWidget), qubit_ind), ui.outputTableWidget)
+                apply_hadamard(input_array, qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_hadamard(ui.lineEdit.text(), qubit_ind))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -206,9 +239,13 @@ if __name__ == '__main__':
 
 
     def walsh_hadamard_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         try:
             output_array_to_table(
-                apply_walsh_hadamard(input_array_from_table(ui.inputTableWidget)), ui.outputTableWidget)
+                apply_walsh_hadamard(input_array), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_walsh_hadamard(ui.lineEdit.text()))
         except sp.SympifyError as error:
             main_message_error(str(error))
@@ -216,13 +253,17 @@ if __name__ == '__main__':
 
 
     def controlled_not_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         control_qubit_ind = qubit_number_from_spin_box(ui.controlledNotControlSpinBox)
         target_qubit_ind = qubit_number_from_spin_box(ui.controlledNotTargetSpinBox)
         if control_qubit_ind == -1 or target_qubit_ind == -1:
             return
         try:
             output_array_to_table(
-                apply_cnot(input_array_from_table(ui.inputTableWidget), control_qubit_ind, target_qubit_ind),
+                apply_cnot(input_array, control_qubit_ind, target_qubit_ind),
                 ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_cnot(ui.lineEdit.text(), control_qubit_ind, target_qubit_ind))
         except sp.SympifyError as error:
@@ -231,6 +272,10 @@ if __name__ == '__main__':
 
 
     def controlled_controlled_not_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         first_control_qubit_ind = qubit_number_from_spin_box(ui.controlledControlledNotFirstControlSpinBox)
         second_control_qubit_ind = qubit_number_from_spin_box(ui.controlledControlledNotSecondControlSpinBox)
         target_qubit_ind = qubit_number_from_spin_box(ui.controlledControlledNotTargetSpinBox)
@@ -238,7 +283,7 @@ if __name__ == '__main__':
             return
         try:
             output_array_to_table(apply_ccnot(
-                input_array_from_table(ui.inputTableWidget),
+                input_array,
                 first_control_qubit_ind, second_control_qubit_ind, target_qubit_ind), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_ccnot(
                 ui.lineEdit.text(), first_control_qubit_ind, second_control_qubit_ind, target_qubit_ind))
@@ -248,6 +293,10 @@ if __name__ == '__main__':
 
 
     def phase_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         phase_control_qubit_ind = qubit_number_from_spin_box(ui.phaseControlSpinBox)
         phase_target_qubit_ind = qubit_number_from_spin_box(ui.phaseTargetSpinBox)
         if phase_control_qubit_ind == -1 or phase_target_qubit_ind == -1:
@@ -255,7 +304,7 @@ if __name__ == '__main__':
         try:
             phase_in_fractions_of_pi = ui.phaseDoubleSpinBox.value()
             output_array_to_table(apply_phase(
-                input_array_from_table(ui.inputTableWidget),
+                input_array,
                 phase_control_qubit_ind, phase_target_qubit_ind, phase_in_fractions_of_pi), ui.outputTableWidget)
             ui.lineEdit.setText(add_apply_phase(
                 ui.lineEdit.text(), phase_control_qubit_ind, phase_target_qubit_ind, phase_in_fractions_of_pi))
@@ -270,8 +319,12 @@ if __name__ == '__main__':
 
 
     def apply_line_push_button_clicked():
+        input_array = input_array_from_table(ui.inputTableWidget)
+        input_array = normalize_input_if_needed(input_array)
+        output_array_to_table(input_array, ui.inputTableWidget)
+
         try:
-            result_array, error_message = apply_scheme(ui.lineEdit.text(), input_array_from_table(ui.inputTableWidget))
+            result_array, error_message = apply_scheme(ui.lineEdit.text(), input_array)
             if error_message == '':
                 output_array_to_table(result_array, ui.outputTableWidget)
                 return
