@@ -1,4 +1,7 @@
 import sys
+
+import numpy as np
+
 from mainwindow import *
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QMessageBox, QFileDialog
 from scheme_builder import *
@@ -344,6 +347,12 @@ if __name__ == '__main__':
                 return
             with open(filename) as file:
                 import_array = file.read().splitlines()
+                n_qubits = 0 if len(import_array) == 0 else math.floor(math.log(len(import_array), 2))
+                if n_qubits == 0:
+                    n_qubits = 1
+                    import_array = np.array(['0', '0'])
+                ui.numberOfQubitsSpinBox.setValue(n_qubits)
+                number_of_qubits_spin_box_value_changed()
                 output_array_to_table(import_array, table_widget)
         except sp.SympifyError as error:
             main_message_error(str(error))
